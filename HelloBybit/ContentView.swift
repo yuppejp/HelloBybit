@@ -63,10 +63,10 @@ struct WalletBalanceView: View {
             }
             Section(header: Text("資産合計 JPY")) {
                 ListItemView(name: "円換算", value: exchage(wallet.total.lastAmount).toIntegerString + " 円")
-                ListItemView(name: "米ドル円レート", value: wallet.USDJPY.toDecimalString + " 円")
                 ListItemView(name: "24時間前", value: exchage(wallet.total.openAmount).toIntegerString + " 円")
-                ListItemView(name: "増減", value: delta(wallet.total.openAmount, wallet.total.lastAmount).toIntegerString + " 円")
-                ListItemView(name: "比率", value: deltaRatio(wallet.total.openAmount, wallet.total.lastAmount).toPercentString)
+                ListItemView(name: "増減額", value: delta(exchage(wallet.total.openAmount), exchage(wallet.total.lastAmount)).toIntegerString + " 円")
+                ListItemView(name: "増減比", value: deltaRatio(exchage(wallet.total.openAmount), exchage(wallet.total.lastAmount)).toPercentString)
+                ListItemView(name: "米ドル円レート", value: wallet.USDJPY.toDecimalString + " 円")
             }
             Section(header: Text("資産内訳")) {
                 ListItemView(name: "現物", value: exchage(wallet.spot.lastAmount).toIntegerString + " 円")
@@ -85,6 +85,9 @@ struct WalletBalanceView: View {
     }
 
     private func deltaRatio(_ from: Double, _ to: Double) -> Double {
+        print("from:", from)
+        print("from:", to)
+        print("delta:", delta(from, to))
         return delta(from, to) / from
     }
 
@@ -167,6 +170,8 @@ extension Double {
     var toPercentString: String {
         let f = NumberFormatter()
         f.numberStyle = .percent
+        f.minimumFractionDigits = 0
+        f.maximumFractionDigits = 1
         return f.string(from: NSNumber(value: self)) ?? "\(self)"
     }
 }
